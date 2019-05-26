@@ -1,0 +1,42 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
+load("@bazel_gazelle//:def.bzl", "gazelle")
+
+# gazelle:prefix github.com/meateam/api-gateway
+gazelle(name = "gazelle")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "file.go",
+        "main.go",
+        "router.go",
+        "upload.go",
+        "user.go",
+    ],
+    importpath = "github.com/meateam/api-gateway",
+    visibility = ["//visibility:private"],
+    deps = [
+        "@com_github_gin_contrib_cors//:go_default_library",
+        "@com_github_gin_gonic_gin//:go_default_library",
+        "@com_github_grpc_ecosystem_grpc_gateway//runtime:go_default_library",
+        "@com_github_meateam_download_service//proto:go_default_library",
+        "@com_github_meateam_file_service//proto:go_default_library",
+        "@com_github_meateam_upload_service//proto:go_default_library",
+        "@com_github_satori_go_uuid//:go_default_library",
+        "@com_github_spf13_viper//:go_default_library",
+        "@org_golang_google_grpc//:go_default_library",
+        "@org_golang_google_grpc//status:go_default_library",
+    ],
+)
+
+go_binary(
+    name = "api-gateway",
+    embed = [":go_default_library"],
+    visibility = ["//visibility:public"],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["main_test.go"],
+    embed = [":go_default_library"],
+)
